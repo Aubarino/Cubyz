@@ -121,8 +121,8 @@ int convertNormal(int normal, mat3 permutationMatrix, vec3 mirrorVector) {
 }
 
 void main() {
-	int faceID = gl_VertexID/4;
-	int vertexID = gl_VertexID%4;
+	int faceID = gl_VertexID>>2;
+	int vertexID = gl_VertexID&3;
 	int encodedPositionAndNormalsAndPermutation = faceData[faceID].encodedPositionAndNormalsAndPermutation;
 	int blockAndModel = faceData[faceID].blockAndModel;
 	int fullLight = faceData[faceID].light[vertexID];
@@ -142,7 +142,7 @@ void main() {
 	mat3 permutationMatrix = permutationMatrices[(encodedPositionAndNormalsAndPermutation >> 23) & 7];
 	vec3 mirrorVector = mirrorVectors[(encodedPositionAndNormalsAndPermutation >> 26) & 7];
 	int normal = convertNormal(oldNormal, permutationMatrix, mirrorVector);
-	ditherSeed = encodedPositionAndNormalsAndPermutation & 15;
+	ditherSeed = faceID;
 
 	blockType = blockAndModel & 65535;
 	int modelIndex = blockAndModel >> 16;
